@@ -19,10 +19,10 @@ class Perceptron(object):
             X : object features\n
             y : the correct class label
         """
-        X = self.__make_bias(X)
+        X = self.__make_bias(X).astype(np.float32)
 
         rnd = np.random.RandomState(self.seed)
-        self.w = rnd.random(size=X.shape[1])  # initializing the initial weights
+        self.w = rnd.random(size=X.shape[1]).astype(np.float32)  # initializing the initial weights
         
         for _ in range(self.epochs):
             for x, y_train in zip(X, y):
@@ -49,5 +49,14 @@ class Perceptron(object):
 
     def __activate(self, x, w) -> int:
         """ Activation function """
-        if (x @ w.T) >= 0: return 1
-        else: return 0
+        if len(x.shape) > 1:
+            res = list()
+            for x_ in x:
+                if (x_ @ w.T) >= 0:
+                    res.append(1)
+                else: 
+                    res.append(0)
+            return np.array(res).astype(np.float32)
+
+        if (x @ w.T) >= 0: return np.array(1).astype(np.float32)
+        else: return np.array(0).astype(np.float32)
